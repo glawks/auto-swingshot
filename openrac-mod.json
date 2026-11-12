@@ -2,9 +2,9 @@
   "format": 2,
   "id": "auto-swingshot",
   "name": "Auto Swingshot",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "glawks",
-  "description": "Experimental RAC1 Swingshot target detection with opt-in auto-equip.",
+  "description": "RAC1 Swingshot auto-equip with configurable range and facing cone (experimental).",
   "license": "MIT",
   "type": "native",
   "api": "1.12",
@@ -52,6 +52,15 @@
       "min": 2,
       "max": 30,
       "description": "Maximum vertical separation in game units."
+    },
+    {
+      "key": "facing_degrees",
+      "name": "Facing angle (degrees)",
+      "type": "int",
+      "default": 60,
+      "min": 20,
+      "max": 90,
+      "description": "Auto-equip only when a target is within this many degrees of Ratchet's facing direction. Smaller angles prevent more accidental switches."
     }
   ]
 }

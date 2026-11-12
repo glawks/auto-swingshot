@@ -77,13 +77,18 @@ struct Runtime {
       : mod(m), ntsc(m.version() == "ntsc"),
         experimental(m.setting<std::string>("activation_mode") == "auto"),
         max_distance(static_cast<float>(m.setting<int>("max_distance"))),
-        vertical_limit(static_cast<float>(m.setting<int>("vertical_limit"))) {}
+        vertical_limit(static_cast<float>(m.setting<int>("vertical_limit"))),
+        facing_degrees(static_cast<float>(m.setting<int>("facing_degrees"))) {}
 
     openrac::Mod& mod;
     bool ntsc = false;
     bool experimental = false;
     float max_distance = 18;
     float vertical_limit = 10;
+    float facing_degrees = 60;
+
+    float min_facing_dot() const { return as::facing_threshold(facing_degrees); }
+
     std::uint32_t seen_loads = std::numeric_limits<std::uint32_t>::max();
     Phase phase = Phase::idle;
     int previous_item = 0;
@@ -111,19 +116,32 @@ struct Runtime {
         return mod.memory().read<std::uint8_t>(owned() + as::kSwingshot) != 0;
     }
 
-    // Use the SDK's level-owned moby snapshots; never cache pointers across
-    // level loads. The two Versa-Target classes cover the RAC1 target models.
-    as::Candidate nearest(const openrac_pose& hero) const {
-        as::Candidate best;
+    // Return both the nearest target for diagnostics and the nearest target
+    // inside the configured distance AND facing cone. A closer target behind
+    // Ratchet must not hide a valid target in front of him.
+    struct Targets {
+        as::Candidate closest;
+        as::Candidate eligible;
+    };
+
+    Targets scan_targets(const openrac_pose& hero) const {
+        Targets result;
         const as::Point player{hero.position[0], hero.position[1], hero.position[2]};
         for (const auto& moby : mod.moby_list()) {
             if (!as::target_class(moby.oclass) || moby.state >= 0x80u) continue;
             const as::Point target{moby.position[0], moby.position[1], moby.position[2]};
-            const auto candidate = as::evaluate(player, target, moby.slot, moby.oclass);
-            if (std::isfinite(candidate.straight) && candidate.straight < best.straight)
-                best = candidate;
+            const auto candidate = as::evaluate(
+                player, target, moby.slot, moby.oclass, hero.rotation[2]);
+            if (std::isfinite(candidate.straight) &&
+                candidate.straight < result.closest.straight) {
+                result.closest = candidate;
+            }
+            if (as::usable(candidate, max_distance, vertical_limit, min_facing_dot()) &&
+                candidate.straight < result.eligible.straight) {
+                result.eligible = candidate;
+            }
         }
-        return best;
+        return result;
     }
 
     void circle_pressed(const openrac_pose& hero, const as::Candidate& c,
@@ -136,7 +154,10 @@ struct Runtime {
             msg += " distance=" + std::to_string(c.straight) +
                 " height_diff=" + std::to_string(c.vertical);
         }
-        msg += " in_range=" + std::string(match ? "yes" : "no") +
+        msg += " in_range=" + std::string(as::within(c, max_distance, vertical_limit) ? "yes" : "no") +
+            " facing_dot=" + std::to_string(c.facing_dot) +
+            " facing=" + (c.facing_dot >= min_facing_dot() ? "yes" : "no") +
+            " eligible=" + (match ? "yes" : "no") +
             " owned=" + (has_swingshot() ? "yes" : "no") +
             " request=" + std::to_string(existing_request);
         mod.info("Auto Swingshot: " + msg);
@@ -169,6 +190,21 @@ struct Runtime {
         if (phase == Phase::waiting) {
             if (hero.item == as::kSwingshot &&
                 mem.read<std::uint32_t>(item_state()) == kReady) {
+                // The player might have turned around while the item was
+                // being equipped. Do not synthesize a delayed shot when the
+                // target is no longer in front and in range.
+                if (scan_targets(hero).eligible.slot < 0) {
+                    mod.info("Auto Swingshot: lost facing/range before firing; cancelling shot");
+                    if (previous_item > 0 && previous_item != as::kSwingshot &&
+                        mem.read<std::uint8_t>(owned() + previous_item) != 0) {
+                        mem.write<std::uint32_t>(request(),
+                                                 static_cast<std::uint32_t>(previous_item));
+                        mod.info("Auto Swingshot: restoring item " +
+                                 std::to_string(previous_item));
+                    }
+                    reset();
+                    return PadAction::suppress_circle;
+                }
                 phase = Phase::active;
                 rest = 0;
                 mod.info("Auto Swingshot: equipped; handing Circle to the game");
@@ -209,9 +245,10 @@ struct Runtime {
         }
 
         if (!edge) return PadAction::unchanged;
-        const auto closest = nearest(hero);
-        const bool match = as::within(closest, max_distance, vertical_limit);
-        circle_pressed(hero, closest, match, request_value);
+        const auto targets = scan_targets(hero);
+        const bool match = targets.eligible.slot >= 0;
+        const auto& selected = match ? targets.eligible : targets.closest;
+        circle_pressed(hero, selected, match, request_value);
         if (!experimental) {
             mod.info("Auto Swingshot: activation skipped because Observe mode is selected");
             return PadAction::unchanged;
@@ -219,7 +256,7 @@ struct Runtime {
         if (!match || !has_swingshot() || hero.item == as::kSwingshot ||
             request_value != 0) {
             mod.info("Auto Swingshot: activation skipped (" +
-                std::string(!match ? "no nearby detected target" :
+                std::string(!match ? "no in-range target within facing cone" :
                             !has_swingshot() ? "Swingshot not owned" :
                             hero.item == as::kSwingshot ? "Swingshot already equipped" :
                             "another item selection is in progress") + ")");
@@ -256,7 +293,8 @@ void load(openrac::Mod& mod) {
     mod.info(std::string("Auto Swingshot: ") +
              (state.experimental ? "AUTO-EQUIP ON (experimental; not game-tested)" : "OBSERVE ONLY") +
              "; range=" + std::to_string(state.max_distance) +
-             "; vertical=" + std::to_string(state.vertical_limit));
+             "; vertical=" + std::to_string(state.vertical_limit) +
+             "; facing cone=" + std::to_string(state.facing_degrees) + " degrees");
 }
 } // namespace
-OPENRAC_MOD_CPP("auto-swingshot", "0.1.1", load)
+OPENRAC_MOD_CPP("auto-swingshot", "0.1.2", load)

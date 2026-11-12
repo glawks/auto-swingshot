@@ -1,6 +1,6 @@
 # Auto Swingshot for OpenRAC RAC1
 
-**Experimental v0.1.1 — not yet verified in-game.**
+**Experimental v0.1.2 — not yet verified in-game.**
 
 A standalone quality-of-life mod that experiments with equipping the Swingshot automatically when Circle is pressed near a Versa-Target in Ratchet & Clank 1.
 
@@ -10,7 +10,7 @@ A standalone quality-of-life mod that experiments with equipping the Swingshot a
 
 **Auto-equip** mode attempts to switch to the Swingshot, use it, and restore the previous weapon. It is untested and may incorrectly select targets, eat a Circle press, or interfere with gameplay. Make a backup save before enabling it.
 
-The first detector recognises target object classes **758** and **803**, using straight-line distance and height difference. It does not yet perform the original game's line-of-sight, facing, or valid-target calculations. The weapon switch and input injection require further testing on both PAL and NTSC.
+The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 adds a configurable facing cone (60° either side by default), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. Further tests are needed on both PAL and NTSC.
 
 ## Download automatic builds
 
@@ -26,8 +26,8 @@ A version tag such as `v0.1.0` triggers an automatic GitHub release. **Do not ta
 2. For a non-invasive check, set **Swingshot activation → Observe targets only** and restart. For the feature itself, leave the default **Auto-equip** enabled; back up your save first.
 3. On Aridia, approach a Swingshot target with a different weapon equipped.
 4. Press Circle from a variety of positions and inspect log lines beginning `Auto Swingshot:`.
-5. Check `target_slot`, `class`, `distance`, `height_diff` and `in_range`. The logged distance is not a validated retail target check.
-6. In **Auto-equip** mode, test tapping and holding Circle, returning to the old weapon, death, travel, and manual weapon selection.
+5. Check `target_slot`, `class`, `distance`, `height_diff`, `in_range`, `facing_dot`, `facing`, and `eligible`. The angle check is geometric, not the full retail target selector. When you face away from a nearby target, `facing=no` and `eligible=no` should be logged; your gun should fire normally.
+6. In **Auto-equip** mode, test tapping and holding Circle; deliberately fire near a target while facing away; rotate away immediately after tapping Circle; verify ordinary gunfire isn't replaced; then test swinging between targets, pulling targets, restoring your weapon, death, travel and manual weapon selection.
 7. Share the logs and any crashes before treating the feature as ready.
 
 ## Local development
