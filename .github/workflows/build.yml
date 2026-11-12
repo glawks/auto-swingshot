@@ -224,10 +224,13 @@ jobs:
             dist/SHA256SUMS
           if-no-files-found: error
 
-  # A tag: every archive and SHA256SUMS on the tag's release, published, for the launcher.
+  # Publish once all platform builds and the merged package pass.
+  # A tag push still publishes as before. A main-branch push publishes only
+  # when .github/publish-version explicitly matches the manifest version.
+  # Existing releases are never overwritten by later builds.
   release:
     needs: merge
-    if: ${{ !cancelled() && needs.merge.result == 'success' && startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ !cancelled() && needs.merge.result == 'success' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -236,23 +239,59 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Identify the requested release
+        id: requested
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          import pathlib
+          import sys
+
+          manifest = json.loads(pathlib.Path("openrac-mod.json").read_text(encoding="utf-8"))
+          version = manifest["version"]
+          tag = "v" + version
+          ref_type = os.environ["GITHUB_REF_TYPE"]
+          if ref_type == "tag":
+              actual_tag = os.environ["GITHUB_REF_NAME"]
+              valid_tags = {tag, manifest["id"] + "-" + tag}
+              if actual_tag not in valid_tags:
+                  sys.exit(f"Tag {actual_tag!r} does not match manifest version {version!r}")
+              tag = actual_tag
+              publish = True
+          else:
+              request = pathlib.Path(".github/publish-version")
+              publish = request.is_file() and request.read_text(encoding="utf-8").strip() == version
+          print(f"tag={tag}")
+          print(f"publish={'true' if publish else 'false'}")
+          PY
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        if: steps.requested.outputs.publish == 'true'
         with:
           name: mods
           path: dist
-      - name: Publish the release
+      - name: Publish requested release
+        if: steps.requested.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ steps.requested.outputs.tag }}
         run: |
+          set -euo pipefail
           sdk=$(python3 -c 'import json; print(json.load(open("sdk.lock"))["version"])')
           cp RELEASE_NOTES.md notes.md
           echo >> notes.md
           echo "---" >> notes.md
           echo "Built from commit $GITHUB_SHA using OpenRAC mod SDK $sdk." >> notes.md
-          # A tag <id>-v<version> releases that one mod of a repository of several: only its
-          # archives, and SHA256SUMS listing them. v<version> releases every mod.
+
+          # Never overwrite assets or silently move a published version.
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "Release $TAG is already published; preserving its assets."
+            exit 0
+          fi
+
+          # Multi-mod tags select only that mod's archives.
           case "$TAG" in
             v[0-9]*) ;;
             *-v[0-9]*)
@@ -262,9 +301,10 @@ jobs:
               (cd dist && sha256sum *.zip > SHA256SUMS)
               ;;
           esac
-          ls dist
-          if gh release view "$TAG" > /dev/null 2>&1; then
-            gh release upload "$TAG" --clobber dist/*
-          else
+          ls -l dist
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
             gh release create "$TAG" --title "Auto Swingshot $TAG" --notes-file notes.md --verify-tag dist/*
+          else
+            # gh creates the missing v<version> tag at this tested commit.
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Auto Swingshot $TAG" --notes-file notes.md dist/*
           fi
