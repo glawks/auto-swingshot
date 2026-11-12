@@ -1,0 +1,13 @@
+# Keep packaged text files byte-identical across Windows, Linux and macOS.
+# The OpenRAC packaging merge checks that LICENSE and other metadata match.
+* text=auto
+LICENSE text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.py text eol=lf
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.h text eol=lf
+*.txt text eol=lf
