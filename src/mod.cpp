@@ -1,4 +1,4 @@
-// Auto Swingshot -- experimental quality-of-life mod for OpenRAC RAC1.
+// Auto Swingshot -- quality-of-life mod for OpenRAC RAC1.
 // Standalone implementation. No OpenRAC source files are modified.
 #include "detection.hpp"
 #include "openrac/mod.hpp"
@@ -291,10 +291,10 @@ void load(openrac::Mod& mod) {
         original();
     });
     mod.info(std::string("Auto Swingshot: ") +
-             (state.experimental ? "AUTO-EQUIP ON (experimental; not game-tested)" : "OBSERVE ONLY") +
+             (state.experimental ? "AUTO-EQUIP ON" : "OBSERVE ONLY") +
              "; range=" + std::to_string(state.max_distance) +
              "; vertical=" + std::to_string(state.vertical_limit) +
              "; facing cone=" + std::to_string(state.facing_degrees) + " degrees");
 }
 } // namespace
-OPENRAC_MOD_CPP("auto-swingshot", "0.1.5", load)
+OPENRAC_MOD_CPP("auto-swingshot", "1.0.0", load)

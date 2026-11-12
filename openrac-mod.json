@@ -2,9 +2,9 @@
   "format": 2,
   "id": "auto-swingshot",
   "name": "Auto Swingshot",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "author": "glawks",
-  "description": "RAC1 Swingshot auto-equip with configurable range and facing cone (experimental).",
+  "description": "Automatically equip and fire the Swingshot near Versa-Targets, then return to your previous weapon.",
   "license": "MIT",
   "type": "native",
   "api": "1.12",
@@ -26,14 +26,14 @@
       "choices": [
         {
           "value": "auto",
-          "name": "Auto-equip (experimental)"
+          "name": "Auto-equip"
         },
         {
           "value": "observe",
           "name": "Observe targets only"
         }
       ],
-      "description": "Automatically equip Swingshot when Circle is pressed near a detected target. Observe mode logs candidates without switching. Restart after changing."
+      "description": "Equip and use the Swingshot on a new Circle press near a target. Observe mode logs detected candidates on Circle presses without changing weapons. Restart after changing."
     },
     {
       "key": "max_distance",
@@ -62,5 +62,6 @@
       "max": 90,
       "description": "Auto-equip only when a target is within this many degrees to the left or right of Ratchet's facing direction. Lower angles reduce accidental switches. Existing saved settings are preserved."
     }
-  ]
+  ],
+  "homepage": "https://github.com/glawks/auto-swingshot"
 }

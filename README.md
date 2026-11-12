@@ -1,62 +1,57 @@
-# Auto Swingshot for OpenRAC RAC1
+# Auto Swingshot
 
-**Testing build v0.1.5 — tested in-game on RAC1 NTSC-U; PAL still needs verification.**
+**Auto Swingshot** automatically equips the Swingshot when you press **Circle** near a Versa-Target in **Ratchet & Clank (2002)** on OpenRAC. After using it, your previous weapon is restored, without having to open the weapon wheel.
 
-A standalone quality-of-life mod that experiments with equipping the Swingshot automatically when Circle is pressed near a Versa-Target in Ratchet & Clank 1.
+## Features
 
-## Status and safety
+- Works with **swinging and pulling Versa-Targets**.
+- Automatically equips and fires the Swingshot, then restores your previously selected weapon (including when you were using the wrench).
+- Supports chaining between swinging targets while airborne, without switching weapons mid-swing.
+- Checks target distance, height and facing angle to avoid unwanted activations.
+- Leaves attachment, movement and release behaviour to the original game.
 
-**Auto-equip is enabled by default** as of v0.1.1. Pressing Circle near a detected target attempts to select the Swingshot, fire it and restore the previous weapon. If you prefer to check detection without changing gameplay, choose **Observe targets only** in the mod settings and restart.
+**How activation works:** Press Circle **again** when the target is within range. The mod detects a **fresh Circle press**; if you are already holding Circle to fire another weapon and then move into range, it will not unexpectedly interrupt your weapon fire.
 
-**Auto-equip** mode switches to the Swingshot, passes the fire input to the original game, and restores the previously selected weapon. In-game NTSC-U tests covered swinging and pulling Versa-Targets, chaining airborne swings, facing checks, and weapon restoration. Possible false switches near targets during active combat remain a limitation. PAL compatibility has not yet been verified in-game.
+## Installation
 
-The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 added a configurable facing cone (now **30° either side by default** in v0.1.3), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. PAL gameplay testing remains outstanding.
+1. In the **OpenRAC Launcher**, open **Mods → Add from a link**.
+2. Paste `https://github.com/glawks/auto-swingshot`.
+3. Install **Auto Swingshot** and enable it for Ratchet & Clank 1.
 
-**Tested defaults:** **16 game units** of distance (v0.1.4), **7 game units** of vertical separation (v0.1.5), and **30°** either side of Ratchet's facing direction (v0.1.3). These settings were calibrated from real NTSC-U gameplay with swinging and pulling Versa-Targets. The game still decides whether each hook actually connects. All three settings remain adjustable.
+The launcher automatically downloads the appropriate platform archive from the [latest GitHub release](https://github.com/glawks/auto-swingshot/releases). You can also install a release ZIP manually. The combined ZIP includes all available platforms.
 
-**Important for upgrades:** If you already set the facing angle to 60° in the launcher, the saved preference may remain at 60° after updating. Change **Facing angle (degrees)** to **30** in the mod settings and restart to test the narrower cone. You can adjust it to suit your preference. Likewise, if your previous target radius was saved as 18 or 20, set it to **16** manually. If height was saved as 10 or 15, set it to **7** manually. Upgrading does not necessarily overwrite saved settings.
+## Settings
 
-## Download automatic builds
+The default settings were tuned through actual NTSC-U gameplay testing; you can leave them unchanged for normal play.
 
-Every push to the `main` branch triggers the GitHub Actions **build** workflow. On a successful run, open **Actions → build → Artifacts**, then download `mods` for the merged cross-platform package or a platform-specific archive.
+| Setting | Default | What it controls |
+| --- | --- | --- |
+| Target radius | **16** | Straight-line distance to a Versa-Target, in game units |
+| Height difference | **7** | Maximum vertical separation, in game units |
+| Facing angle | **30°** | Allowed angle to either side of Ratchet's forward direction |
+| Swingshot activation | **Auto-equip** | Optional **Observe targets only** mode logs candidate targets without changing weapons |
 
-The workflow builds for Windows x64, Linux x64/ARM64, macOS Intel/Apple Silicon and Android ARM64 using the OpenRAC SDK pinned in `sdk.lock`. GitHub Actions reports any build or test failures. Builds are test builds until the first public release is tagged.
+Changes require a game restart. **Existing settings are preserved when updating:** if you used an earlier test build, manually set the values to **16 / 7 / 30°** if you want the new defaults.
 
-A version tag such as `v0.1.0` triggers an automatic GitHub release. Verify the target platform and package before tagging a release.
+## Compatibility and limitations
 
-## Testing
+- Supports **RAC1 NTSC-U and PAL**. **NTSC-U has been tested in-game; PAL has been built but is not yet gameplay-tested.**
+- Native builds are provided for **Windows x64, Linux x64/ARM64, macOS Intel/Apple Silicon and Android ARM64**.
+- Tested on NTSC-U with **Lock Strafe, Pause Weapon Wheel, Expanded Quick Select, Keyboard & Mouse, Ammo Max, Damage Numbers, Better Pause Menu and Xbox Icons** active simultaneously. Other mod combinations are not guaranteed.
+- Range and facing checks determine when the mod attempts to equip; the **game itself decides whether the Swingshot connects**. Missed connections or detaching when falling too far can happen just as in the original game.
+- Pressing Circle while aiming near a target can select the Swingshot instead of firing your current weapon. You can still fire normally outside the target's range or while facing away.
+- If the target moves outside the permitted range or facing angle before equipment is ready, the pending shot is cancelled.
 
-1. Install a successful build through the OpenRAC launcher.
-2. For a non-invasive check, set **Swingshot activation → Observe targets only** and restart. For the feature itself, leave the default **Auto-equip** enabled; back up your save first.
-3. On Aridia, approach a Swingshot target with a different weapon equipped.
-4. Press Circle from a variety of positions and inspect log lines beginning `Auto Swingshot:`.
-5. Check `target_slot`, `class`, `distance`, `height_diff`, `in_range`, `facing_dot`, `facing`, and `eligible`. The angle check is geometric, not the full retail target selector. When you face away from a nearby target, `facing=no` and `eligible=no` should be logged; your gun should fire normally.
-6. In **Auto-equip** mode, test tapping and holding Circle; deliberately fire near a target while facing away; rotate away immediately after tapping Circle; verify ordinary gunfire isn't replaced; then test swinging between targets, pulling targets, restoring your weapon, death, travel and manual weapon selection.
-7. Share the logs and any crashes before treating the feature as ready.
+## Troubleshooting
 
-## Local development
+Make sure you own the Swingshot, the mod is enabled, and you are within the configured range while facing the target. If you were already holding Circle, release it and press again.
 
-Requires Python 3, CMake, Ninja, a C++17 compiler and an internet connection for the pinned SDK:
+For detailed diagnostics, check the game log for lines beginning `Auto Swingshot:`. The message `equipped; handing Circle to the game` confirms that input was passed to the game, **not** that the hook successfully connected.
 
-```sh
-python tools/fetch_sdk.py
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
-```
+Please report issues on [GitHub Issues](https://github.com/glawks/auto-swingshot/issues), including the disc version (NTSC-U/PAL), active mods and relevant log lines.
 
-For detection-only tests without downloading the SDK:
+## For developers
 
-```sh
-cmake -S . -B build-test -DBUILD_OPENRAC_MOD=OFF
-cmake --build build-test
-ctest --test-dir build-test --output-on-failure
-```
+The mod is built against the SDK pinned in [`sdk.lock`](sdk.lock). See [development and release instructions](docs/DEVELOPMENT.md) for local builds, tests and tagging.
 
-## Technical
-
-The mod hooks `rac1.player.update`, reads player poses and live world objects through the OpenRAC SDK, and uses the RAC1 item request in experimental mode. No original game files are modified.
-
-Source references: [OpenRAC SDK](https://github.com/OpenRAC/OpenRAC), [RAC1 weapon notes](https://github.com/OpenRAC/OpenRAC/blob/develop/docs/port/WEAPONS.md), [rac-rs auto gadget implementation](https://github.com/AsobiCodes/rac-rs/blob/main/rac-rs/src/rac1/retail/auto_gadget.rs).
-
-Copyright (c) 2026 glawks. MIT License.
+Licensed under the [MIT License](LICENSE). Copyright © 2026 glawks.
