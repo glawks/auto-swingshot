@@ -12,14 +12,6 @@
 
 **How activation works:** Press Circle **again** when the target is within range. The mod detects a **fresh Circle press**; if you are already holding Circle to fire another weapon and then move into range, it will not unexpectedly interrupt your weapon fire.
 
-## Installation
-
-1. In the **OpenRAC Launcher**, open **Mods → Add from a link**.
-2. Paste `https://github.com/glawks/auto-swingshot`.
-3. Install **Auto Swingshot** and enable it for Ratchet & Clank 1.
-
-The launcher automatically downloads the appropriate platform archive from the [latest GitHub release](https://github.com/glawks/auto-swingshot/releases). You can also install a release ZIP manually. The combined ZIP includes all available platforms.
-
 ## Settings
 
 The default settings were tuned through actual NTSC-U gameplay testing; you can leave them unchanged for normal play.
