@@ -33,6 +33,9 @@ int main() {
  assert(!usable(back,18,10,threshold));
  assert(!usable(side,18,10,threshold));
  assert(!usable(front,9,10,threshold));
+ // The chosen defaults: 16 range, 7 height, 30 degrees facing.
+ assert(usable(evaluate({0,0,0},{4.0f,0,6.9f},10,803,0.0f),16,7,narrow));
+ assert(!usable(evaluate({0,0,0},{4.0f,0,7.1f},11,803,0.0f),16,7,narrow));
  // A front target inside 16 game units qualifies; one just outside does not.
  assert(usable(evaluate({0,0,0},{15.9f,0,0},8,803,0.0f),16,10,narrow));
  assert(!usable(evaluate({0,0,0},{16.1f,0,0},9,803,0.0f),16,10,narrow));

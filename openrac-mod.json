@@ -2,7 +2,7 @@
   "format": 2,
   "id": "auto-swingshot",
   "name": "Auto Swingshot",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "glawks",
   "description": "RAC1 Swingshot auto-equip with configurable range and facing cone (experimental).",
   "license": "MIT",
@@ -48,10 +48,10 @@
       "key": "vertical_limit",
       "name": "Height difference",
       "type": "int",
-      "default": 10,
+      "default": 7,
       "min": 2,
       "max": 30,
-      "description": "Maximum vertical separation in game units."
+      "description": "Maximum vertical separation in game units. Default 7, based on in-game jumping tests; the game handles final attachment and release."
     },
     {
       "key": "facing_degrees",

@@ -1,6 +1,6 @@
 # Auto Swingshot for OpenRAC RAC1
 
-**Experimental v0.1.4 — not yet verified in-game.**
+**Testing build v0.1.5 — tested in-game on RAC1 NTSC-U; PAL still needs verification.**
 
 A standalone quality-of-life mod that experiments with equipping the Swingshot automatically when Circle is pressed near a Versa-Target in Ratchet & Clank 1.
 
@@ -8,21 +8,21 @@ A standalone quality-of-life mod that experiments with equipping the Swingshot a
 
 **Auto-equip is enabled by default** as of v0.1.1. Pressing Circle near a detected target attempts to select the Swingshot, fire it and restore the previous weapon. If you prefer to check detection without changing gameplay, choose **Observe targets only** in the mod settings and restart.
 
-**Auto-equip** mode attempts to switch to the Swingshot, use it, and restore the previous weapon. It is untested and may incorrectly select targets, eat a Circle press, or interfere with gameplay. Make a backup save before enabling it.
+**Auto-equip** mode switches to the Swingshot, passes the fire input to the original game, and restores the previously selected weapon. In-game NTSC-U tests covered swinging and pulling Versa-Targets, chaining airborne swings, facing checks, and weapon restoration. Possible false switches near targets during active combat remain a limitation. PAL compatibility has not yet been verified in-game.
 
-The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 added a configurable facing cone (now **30° either side by default** in v0.1.3), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. Further tests are needed on both PAL and NTSC.
+The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 added a configurable facing cone (now **30° either side by default** in v0.1.3), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. PAL gameplay testing remains outstanding.
 
-**Range calibration:** v0.1.4 changes the default target radius from 18 to **16 game units**, based on in-game tests of a swinging Versa-Target. The 30° facing default remains unchanged; the game's own connection rules still decide whether a hook attaches. Both settings remain adjustable.
+**Tested defaults:** **16 game units** of distance (v0.1.4), **7 game units** of vertical separation (v0.1.5), and **30°** either side of Ratchet's facing direction (v0.1.3). These settings were calibrated from real NTSC-U gameplay with swinging and pulling Versa-Targets. The game still decides whether each hook actually connects. All three settings remain adjustable.
 
-**Important for upgrades:** If you already set the facing angle to 60° in the launcher, the saved preference may remain at 60° after updating. Change **Facing angle (degrees)** to **30** in the mod settings and restart to test the narrower cone. You can adjust it to suit your preference. Likewise, if your previous target radius was saved as 18 or 20, set it to **16** manually; upgrading does not necessarily overwrite saved settings.
+**Important for upgrades:** If you already set the facing angle to 60° in the launcher, the saved preference may remain at 60° after updating. Change **Facing angle (degrees)** to **30** in the mod settings and restart to test the narrower cone. You can adjust it to suit your preference. Likewise, if your previous target radius was saved as 18 or 20, set it to **16** manually. If height was saved as 10 or 15, set it to **7** manually. Upgrading does not necessarily overwrite saved settings.
 
 ## Download automatic builds
 
 Every push to the `main` branch triggers the GitHub Actions **build** workflow. On a successful run, open **Actions → build → Artifacts**, then download `mods` for the merged cross-platform package or a platform-specific archive.
 
-The workflow builds for Windows x64, Linux x64/ARM64, macOS Intel/Apple Silicon and Android ARM64 using the OpenRAC SDK pinned in `sdk.lock`. GitHub Actions reports any build or test failures. Builds are experimental and should not be presented as stable releases.
+The workflow builds for Windows x64, Linux x64/ARM64, macOS Intel/Apple Silicon and Android ARM64 using the OpenRAC SDK pinned in `sdk.lock`. GitHub Actions reports any build or test failures. Builds are test builds until the first public release is tagged.
 
-A version tag such as `v0.1.0` triggers an automatic GitHub release. **Do not tag until the in-game tests pass.**
+A version tag such as `v0.1.0` triggers an automatic GitHub release. Verify the target platform and package before tagging a release.
 
 ## Testing
 
