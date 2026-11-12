@@ -1,14 +1,14 @@
 # Auto Swingshot for OpenRAC RAC1
 
-**Experimental v0.1.0 — not yet verified in-game.**
+**Experimental v0.1.1 — not yet verified in-game.**
 
 A standalone quality-of-life mod that experiments with equipping the Swingshot automatically when Circle is pressed near a Versa-Target in Ratchet & Clank 1.
 
 ## Status and safety
 
-The default **Observe targets** mode only logs candidate targets when Circle is pressed and does **not** change gameplay. This is the recommended first test.
+**Auto-equip is enabled by default** as of v0.1.1. Pressing Circle near a detected target attempts to select the Swingshot, fire it and restore the previous weapon. If you prefer to check detection without changing gameplay, choose **Observe targets only** in the mod settings and restart.
 
-**Experimental auto-equip** mode attempts to switch to the Swingshot, use it, and restore the previous weapon. It is untested and may incorrectly select targets, eat a Circle press, or interfere with gameplay. Make a backup save before enabling it.
+**Auto-equip** mode attempts to switch to the Swingshot, use it, and restore the previous weapon. It is untested and may incorrectly select targets, eat a Circle press, or interfere with gameplay. Make a backup save before enabling it.
 
 The first detector recognises target object classes **758** and **803**, using straight-line distance and height difference. It does not yet perform the original game's line-of-sight, facing, or valid-target calculations. The weapon switch and input injection require further testing on both PAL and NTSC.
 
@@ -23,11 +23,11 @@ A version tag such as `v0.1.0` triggers an automatic GitHub release. **Do not ta
 ## Testing
 
 1. Install a successful build through the OpenRAC launcher.
-2. Leave the mode on **Observe targets**.
+2. For a non-invasive check, set **Swingshot activation → Observe targets only** and restart. For the feature itself, leave the default **Auto-equip** enabled; back up your save first.
 3. On Aridia, approach a Swingshot target with a different weapon equipped.
 4. Press Circle from a variety of positions and inspect log lines beginning `Auto Swingshot:`.
 5. Check `target_slot`, `class`, `distance`, `height_diff` and `in_range`. The logged distance is not a validated retail target check.
-6. Only after observation works, back up a save, change to **Experimental auto-equip**, restart, and test tapping and holding Circle, returning to the old weapon, death, travel, and manual weapon selection.
+6. In **Auto-equip** mode, test tapping and holding Circle, returning to the old weapon, death, travel, and manual weapon selection.
 7. Share the logs and any crashes before treating the feature as ready.
 
 ## Local development

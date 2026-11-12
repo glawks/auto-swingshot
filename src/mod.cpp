@@ -75,7 +75,7 @@ private:
 struct Runtime {
     explicit Runtime(openrac::Mod& m)
       : mod(m), ntsc(m.version() == "ntsc"),
-        experimental(m.setting<std::string>("mode") == "experimental"),
+        experimental(m.setting<std::string>("activation_mode") == "auto"),
         max_distance(static_cast<float>(m.setting<int>("max_distance"))),
         vertical_limit(static_cast<float>(m.setting<int>("vertical_limit"))) {}
 
@@ -212,8 +212,17 @@ struct Runtime {
         const auto closest = nearest(hero);
         const bool match = as::within(closest, max_distance, vertical_limit);
         circle_pressed(hero, closest, match, request_value);
-        if (!experimental || !match || !has_swingshot() ||
-            hero.item == as::kSwingshot || request_value != 0) {
+        if (!experimental) {
+            mod.info("Auto Swingshot: activation skipped because Observe mode is selected");
+            return PadAction::unchanged;
+        }
+        if (!match || !has_swingshot() || hero.item == as::kSwingshot ||
+            request_value != 0) {
+            mod.info("Auto Swingshot: activation skipped (" +
+                std::string(!match ? "no nearby detected target" :
+                            !has_swingshot() ? "Swingshot not owned" :
+                            hero.item == as::kSwingshot ? "Swingshot already equipped" :
+                            "another item selection is in progress") + ")");
             return PadAction::unchanged;
         }
         // RAC1 uses 8 for its wrench. The last held weapon is stored separately.
@@ -245,9 +254,9 @@ void load(openrac::Mod& mod) {
         original();
     });
     mod.info(std::string("Auto Swingshot: ") +
-             (state.experimental ? "EXPERIMENTAL SWITCHING (not game-tested)" : "OBSERVE ONLY") +
+             (state.experimental ? "AUTO-EQUIP ON (experimental; not game-tested)" : "OBSERVE ONLY") +
              "; range=" + std::to_string(state.max_distance) +
              "; vertical=" + std::to_string(state.vertical_limit));
 }
 } // namespace
-OPENRAC_MOD_CPP("auto-swingshot", "0.1.0", load)
+OPENRAC_MOD_CPP("auto-swingshot", "0.1.1", load)

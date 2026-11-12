@@ -2,7 +2,7 @@
   "format": 2,
   "id": "auto-swingshot",
   "name": "Auto Swingshot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "glawks",
   "description": "Experimental RAC1 Swingshot target detection with opt-in auto-equip.",
   "license": "MIT",
@@ -19,21 +19,21 @@
   ],
   "settings": [
     {
-      "key": "mode",
-      "name": "Mode",
+      "key": "activation_mode",
+      "name": "Swingshot activation",
       "type": "choice",
-      "default": "observe",
+      "default": "auto",
       "choices": [
         {
-          "value": "observe",
-          "name": "Observe targets (safe)"
+          "value": "auto",
+          "name": "Auto-equip (experimental)"
         },
         {
-          "value": "experimental",
-          "name": "Experimental auto-equip"
+          "value": "observe",
+          "name": "Observe targets only"
         }
       ],
-      "description": "Observe logs targets without changing gameplay; experimental changes weapon selection. Restart after changing."
+      "description": "Automatically equip Swingshot when Circle is pressed near a detected target. Observe mode logs candidates without switching. Restart after changing."
     },
     {
       "key": "max_distance",
