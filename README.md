@@ -1,6 +1,6 @@
 # Auto Swingshot for OpenRAC RAC1
 
-**Experimental v0.1.2 — not yet verified in-game.**
+**Experimental v0.1.3 — not yet verified in-game.**
 
 A standalone quality-of-life mod that experiments with equipping the Swingshot automatically when Circle is pressed near a Versa-Target in Ratchet & Clank 1.
 
@@ -10,7 +10,9 @@ A standalone quality-of-life mod that experiments with equipping the Swingshot a
 
 **Auto-equip** mode attempts to switch to the Swingshot, use it, and restore the previous weapon. It is untested and may incorrectly select targets, eat a Circle press, or interfere with gameplay. Make a backup save before enabling it.
 
-The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 adds a configurable facing cone (60° either side by default), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. Further tests are needed on both PAL and NTSC.
+The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 added a configurable facing cone (now **30° either side by default** in v0.1.3), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. Further tests are needed on both PAL and NTSC.
+
+**Important for upgrades:** If you already set the facing angle to 60° in the launcher, the saved preference may remain at 60° after updating. Change **Facing angle (degrees)** to **30** in the mod settings and restart to test the narrower cone. You can adjust it to suit your preference.
 
 ## Download automatic builds
 

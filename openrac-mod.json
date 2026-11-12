@@ -2,7 +2,7 @@
   "format": 2,
   "id": "auto-swingshot",
   "name": "Auto Swingshot",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "glawks",
   "description": "RAC1 Swingshot auto-equip with configurable range and facing cone (experimental).",
   "license": "MIT",
@@ -57,10 +57,10 @@
       "key": "facing_degrees",
       "name": "Facing angle (degrees)",
       "type": "int",
-      "default": 60,
+      "default": 30,
       "min": 20,
       "max": 90,
-      "description": "Auto-equip only when a target is within this many degrees of Ratchet's facing direction. Smaller angles prevent more accidental switches."
+      "description": "Auto-equip only when a target is within this many degrees to the left or right of Ratchet's facing direction. Lower angles reduce accidental switches. Existing saved settings are preserved."
     }
   ]
 }

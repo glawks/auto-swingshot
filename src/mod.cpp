@@ -85,7 +85,7 @@ struct Runtime {
     bool experimental = false;
     float max_distance = 18;
     float vertical_limit = 10;
-    float facing_degrees = 60;
+    float facing_degrees = 30;
 
     float min_facing_dot() const { return as::facing_threshold(facing_degrees); }
 
@@ -297,4 +297,4 @@ void load(openrac::Mod& mod) {
              "; facing cone=" + std::to_string(state.facing_degrees) + " degrees");
 }
 } // namespace
-OPENRAC_MOD_CPP("auto-swingshot", "0.1.2", load)
+OPENRAC_MOD_CPP("auto-swingshot", "0.1.3", load)
