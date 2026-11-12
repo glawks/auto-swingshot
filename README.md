@@ -1,6 +1,6 @@
 # Auto Swingshot for OpenRAC RAC1
 
-**Experimental v0.1.3 — not yet verified in-game.**
+**Experimental v0.1.4 — not yet verified in-game.**
 
 A standalone quality-of-life mod that experiments with equipping the Swingshot automatically when Circle is pressed near a Versa-Target in Ratchet & Clank 1.
 
@@ -12,7 +12,9 @@ A standalone quality-of-life mod that experiments with equipping the Swingshot a
 
 The detector recognises target object classes **758** and **803**, using straight-line distance, height difference and **Ratchet's facing angle**. Version 0.1.2 added a configurable facing cone (now **30° either side by default** in v0.1.3), so targets behind or far to the side no longer trigger a weapon switch. If Ratchet turns away before the Swingshot equips, the pending shot is cancelled. It still relies on the game's normal targeting, collision and attachment behaviour once the tool fires, and is not a substitute for the game's full target selector. Further tests are needed on both PAL and NTSC.
 
-**Important for upgrades:** If you already set the facing angle to 60° in the launcher, the saved preference may remain at 60° after updating. Change **Facing angle (degrees)** to **30** in the mod settings and restart to test the narrower cone. You can adjust it to suit your preference.
+**Range calibration:** v0.1.4 changes the default target radius from 18 to **16 game units**, based on in-game tests of a swinging Versa-Target. The 30° facing default remains unchanged; the game's own connection rules still decide whether a hook attaches. Both settings remain adjustable.
+
+**Important for upgrades:** If you already set the facing angle to 60° in the launcher, the saved preference may remain at 60° after updating. Change **Facing angle (degrees)** to **30** in the mod settings and restart to test the narrower cone. You can adjust it to suit your preference. Likewise, if your previous target radius was saved as 18 or 20, set it to **16** manually; upgrading does not necessarily overwrite saved settings.
 
 ## Download automatic builds
 

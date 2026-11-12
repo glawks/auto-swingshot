@@ -33,6 +33,9 @@ int main() {
  assert(!usable(back,18,10,threshold));
  assert(!usable(side,18,10,threshold));
  assert(!usable(front,9,10,threshold));
+ // A front target inside 16 game units qualifies; one just outside does not.
+ assert(usable(evaluate({0,0,0},{15.9f,0,0},8,803,0.0f),16,10,narrow));
+ assert(!usable(evaluate({0,0,0},{16.1f,0,0},9,803,0.0f),16,10,narrow));
  assert(!usable(front,18,4,threshold));
  assert(usable(evaluate({0,0,0},{0,10,5},5,803,kPi/2),18,10,threshold));
  assert(!usable(evaluate({0,0,0},{0,-10,5},6,803,kPi/2),18,10,threshold));

@@ -2,7 +2,7 @@
   "format": 2,
   "id": "auto-swingshot",
   "name": "Auto Swingshot",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": "glawks",
   "description": "RAC1 Swingshot auto-equip with configurable range and facing cone (experimental).",
   "license": "MIT",
@@ -39,10 +39,10 @@
       "key": "max_distance",
       "name": "Target radius",
       "type": "int",
-      "default": 18,
+      "default": 16,
       "min": 4,
       "max": 40,
-      "description": "Approximate distance in game units, not retail targeting."
+      "description": "Maximum geometric distance to a target in game units. Default 16, tuned from in-game connection tests; the game's own hooking rules still apply. Saved preferences override this default."
     },
     {
       "key": "vertical_limit",
